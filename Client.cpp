@@ -14,30 +14,26 @@ int main() {
   const char* service = "http";
 
   // Get address info for server
-  struct addrinfo* res;
-  int addrInfo = getaddrinfo(domain, service, &hints, &res);
+  struct addrinfo* servInfo;
+  int addrInfo = getaddrinfo(domain, service, &hints, &servInfo);
   if (addrInfo != 0) {
     std::cerr << "Could not get any address info\n";
   }
 
   // Create socket
-  int sockFd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+  int sockFd = socket(servInfo->ai_family, servInfo->ai_socktype, servInfo->ai_protocol);
   if (sockFd == -1) {
     std::cerr << "Socket could not be created\n";
   }
 
-  // Bind socket to port
-  // int bindN = bind(sockFd, res->ai_addr, res->ai_addrlen);
-  // if (bindN == -1) {
-  //   std::cerr << "Socket could not be bound\n";
-  // }
-
   // Connect to socket
-  int conn = connect(sockFd, res->ai_addr, res->ai_addrlen);
+  int conn = connect(sockFd, servInfo->ai_addr, servInfo->ai_addrlen);
   if (conn == -1) {
     std::cerr << "Connection could not be made\n";
   }
+  std::cout << conn << '\n';
 
-  freeaddrinfo(res);
+
+  freeaddrinfo(servInfo);
   return 0;
 }
