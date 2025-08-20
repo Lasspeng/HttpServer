@@ -40,31 +40,33 @@ int main() {
     std::cerr << "Connection with incoming TCP request could not be made\n";
   }
 
-  // Get message from TCP connection
-  void* incMsg = malloc(100);
-  int recBytes = recv(clientSockFd, incMsg, 100, 0);
-  if (recBytes == -1) {
-    std::cerr << "Could not retrieve message\n";
-  } else if (recBytes == 0) {
-    std::cout << "Client has closed the TCP connection\n";
-  }
-  char* incMsgStr = (char*)incMsg;
-  std::cout << incMsgStr << '\n';
+  while (true) {
+    // Get message from TCP client
+    void* incMsg = malloc(100);
+    int recBytes = recv(clientSockFd, incMsg, 100, 0);
+    if (recBytes == -1) {
+      std::cerr << "Could not retrieve message\n";
+    } else if (recBytes == 0) {
+      std::cout << "Client has closed the TCP connection\n";
+    }
+    char* incMsgStr = (char*)incMsg;
+    std::cout << incMsgStr << '\n';
 
-        
-  int len = strlen(incMsgStr);
-  for (int i = 0; i < len; i++) {
-    incMsgStr[i] = std::toupper(incMsgStr[i]);
+          
+    int len = strlen(incMsgStr);
+    for (int i = 0; i < len; i++) {
+      incMsgStr[i] = std::toupper(incMsgStr[i]);
+    }
+
+    // Send message back to client
+    int sentBytes = send(clientSockFd, incMsgStr, len, 0);
+    if (sentBytes == -1) {
+      std::cerr << "Message could not be sent over the TCP connection\n";
+    }
+    free(incMsg);
   }
 
-  // Send message back to client
-  int sentBytes = send(clientSockFd, incMsgStr, len, 0);
-  if (sentBytes == -1) {
-    std::cerr << "Message could not be sent over the TCP connection\n";
-  }
-  
-
-  close(clientSockFd);
+  // close(clientSockFd);
   close(sockFd);
   freeaddrinfo(servInfo);
   return 0;

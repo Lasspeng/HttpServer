@@ -28,16 +28,32 @@ int main() {
     std::cerr << "Socket could not be created\n";
   }
   // Print IP address and port
-  struct sockaddr_in* ipv4 = (struct sockaddr_in*)servInfo->ai_addr;
-  char ipstr[INET_ADDRSTRLEN];
-  inet_ntop(AF_INET, &(ipv4->sin_addr), ipstr, sizeof(ipstr));
-  int port = ntohs(ipv4->sin_port);
-  std::cout << "IP: " << ipstr << " Port: " << port << '\n';
+  // struct sockaddr_in* ipv4 = (struct sockaddr_in*)servInfo->ai_addr;
+  // char ipstr[INET_ADDRSTRLEN];
+  // inet_ntop(AF_INET, &(ipv4->sin_addr), ipstr, sizeof(ipstr));
+  // int port = ntohs(ipv4->sin_port);
+  // std::cout << "IP: " << ipstr << " Port: " << port << '\n';
 
   // Connect to server socket
   int conn = connect(sockFd, servInfo->ai_addr, servInfo->ai_addrlen);
   if (conn == -1) {
     std::cerr << "Connection could not be made\n";
+  }
+  // Print out information on the server being connected to
+  struct sockaddr_storage peer_addr;
+  socklen_t addr_len = sizeof(peer_addr);
+  if (getpeername(sockFd, (struct sockaddr*)&peer_addr, &addr_len) == -1) {
+      perror("getpeername");
+  } else {
+      char ipstr[INET6_ADDRSTRLEN];
+      int port;
+
+      if (peer_addr.ss_family == AF_INET) {
+          struct sockaddr_in* s = (struct sockaddr_in*)&peer_addr;
+          inet_ntop(AF_INET, &s->sin_addr, ipstr, sizeof(ipstr));
+          port = ntohs(s->sin_port);
+      }
+      std::cout << "Connected to " << ipstr << " on port " << port << "\n";
   }
 
   // Send message to server
