@@ -40,6 +40,16 @@ int main() {
     std::cerr << "Connection with incoming TCP request could not be made\n";
   }
 
+  // Get message from TCP connection
+  void* incMsg = malloc(100);
+  int recBytes = recv(clientSockFd, incMsg, 100, 0);
+  if (recBytes == -1) {
+    // std::cerr << "Could not retrieve message\n";
+  } else if (recBytes == 0) {
+    std::cout << "Client has closed the TCP connection\n";
+  }
+  std::cout << (char*)incMsg << '\n';
+
 
   close(clientSockFd);
   close(sockFd);

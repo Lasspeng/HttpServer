@@ -3,6 +3,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 int main() {
   // Give some server info
@@ -11,8 +12,8 @@ int main() {
   hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;
-  const char* domain = "google.com";
-  const char* service = "http";
+  const char* domain = NULL;
+  const char* service = "3490";
 
   // Get address info for server
   struct addrinfo* servInfo;
@@ -39,7 +40,20 @@ int main() {
     std::cerr << "Connection could not be made\n";
   }
 
+  // Send message to server
+  const char* msg = "Hello, server";
+  int len = strlen(msg);
+  int sentBytes = send(sockFd, msg, len, 0);
+  if (sentBytes == -1) {
+    std::cerr << "Message could not be sent over the TCP connection\n";
+  }
+  // If message is too large, all of it may not be able to be sent over one send operation
+  if (sentBytes < len) {
+    std::cout << "Only part of the message was sent\n";
+  }
 
+
+  close(sockFd);
   freeaddrinfo(servInfo);
   return 0;
 }
