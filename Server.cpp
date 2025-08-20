@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <unistd.h>
 
 int main() {
   struct addrinfo hints;
@@ -19,13 +20,29 @@ int main() {
     std::cerr << "Socket could not be created\n";
   }
 
-  // Bind socket to port
+  // Bind socket to ip address and port number
   int bindN = bind(sockFd, servInfo->ai_addr, servInfo->ai_addrlen);
   if (bindN == -1) {
     std::cerr << "Socket could not be bound\n";
   }
 
+  // Have socket listen for incoming TCP connection requests
+  int listenN = listen(sockFd, 5);
+  if (listenN == -1) {
+    std::cerr << "Socket could not listen for connections\n";
+  }
 
+  // Accept incoming TCP connection
+  struct sockaddr clientInfo;
+  socklen_t size = sizeof(clientInfo);
+  int clientSockFd = accept(sockFd, &clientInfo, &size);
+  if (clientSockFd == -1) {
+    std::cerr << "Connection with incoming TCP request could not be made\n";
+  }
+
+
+  close(clientSockFd);
+  close(sockFd);
   freeaddrinfo(servInfo);
   return 0;
 }

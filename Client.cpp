@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <arpa/inet.h>
 
 int main() {
   // Give some server info
@@ -20,18 +21,23 @@ int main() {
     std::cerr << "Could not get any address info\n";
   }
 
-  // Create socket
+  // Create client socket
   int sockFd = socket(servInfo->ai_family, servInfo->ai_socktype, servInfo->ai_protocol);
   if (sockFd == -1) {
     std::cerr << "Socket could not be created\n";
   }
+  // Print IP address and port
+  struct sockaddr_in* ipv4 = (struct sockaddr_in*)servInfo->ai_addr;
+  char ipstr[INET_ADDRSTRLEN];
+  inet_ntop(AF_INET, &(ipv4->sin_addr), ipstr, sizeof(ipstr));
+  int port = ntohs(ipv4->sin_port);
+  std::cout << "IP: " << ipstr << " Port: " << port << '\n';
 
-  // Connect to socket
+  // Connect to server socket
   int conn = connect(sockFd, servInfo->ai_addr, servInfo->ai_addrlen);
   if (conn == -1) {
     std::cerr << "Connection could not be made\n";
   }
-  std::cout << conn << '\n';
 
 
   freeaddrinfo(servInfo);
