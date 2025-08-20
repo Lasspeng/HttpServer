@@ -52,6 +52,16 @@ int main() {
     std::cout << "Only part of the message was sent\n";
   }
 
+  // Get response from server
+  void* incMsg = malloc(100);
+  int recBytes = recv(sockFd, incMsg, 100, 0);
+  if (recBytes == -1) {
+    std::cerr << "Could not retrieve message\n";
+  } else if (recBytes == 0) {
+    std::cout << "Client has closed the TCP connection\n";
+  }
+  std::cout << (char*)incMsg << '\n';
+
 
   close(sockFd);
   freeaddrinfo(servInfo);

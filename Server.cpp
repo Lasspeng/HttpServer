@@ -48,8 +48,21 @@ int main() {
   } else if (recBytes == 0) {
     std::cout << "Client has closed the TCP connection\n";
   }
-  std::cout << (char*)incMsg << '\n';
+  char* incMsgStr = (char*)incMsg;
+  std::cout << incMsgStr << '\n';
 
+        
+  int len = strlen(incMsgStr);
+  for (int i = 0; i < len; i++) {
+    incMsgStr[i] = std::toupper(incMsgStr[i]);
+  }
+
+  // Send message back to client
+  int sentBytes = send(clientSockFd, incMsgStr, len, 0);
+  if (sentBytes == -1) {
+    std::cerr << "Message could not be sent over the TCP connection\n";
+  }
+  
 
   close(clientSockFd);
   close(sockFd);
