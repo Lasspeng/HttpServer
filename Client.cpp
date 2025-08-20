@@ -12,8 +12,8 @@ int main() {
   hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;
-  const char* domain = NULL;
-  const char* service = "3490";
+  const char* domain = "127.0.0.1";
+  const char* service = "8080";
 
   // Get address info for server
   struct addrinfo* servInfo;

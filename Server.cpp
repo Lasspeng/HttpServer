@@ -12,7 +12,7 @@ int main() {
   hints.ai_flags = AI_PASSIVE;
 
   struct addrinfo* servInfo;
-  int addrInfo = getaddrinfo(NULL, "3490", &hints, &servInfo);
+  int addrInfo = getaddrinfo("127.0.0.1", "8080", &hints, &servInfo);
 
   // Create socket
   int sockFd = socket(servInfo->ai_family, servInfo->ai_socktype, servInfo->ai_protocol);
@@ -44,7 +44,7 @@ int main() {
   void* incMsg = malloc(100);
   int recBytes = recv(clientSockFd, incMsg, 100, 0);
   if (recBytes == -1) {
-    // std::cerr << "Could not retrieve message\n";
+    std::cerr << "Could not retrieve message\n";
   } else if (recBytes == 0) {
     std::cout << "Client has closed the TCP connection\n";
   }
