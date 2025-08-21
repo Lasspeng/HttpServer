@@ -49,21 +49,42 @@ int main() {
       std::cerr << "Could not retrieve message\n";
     } else if (recBytes == 0) {
       std::cout << "Client has closed the TCP connection\n";
+      break;
     }
     char* incMsgStr = (char*)incMsg;
     std::cout << incMsgStr << '\n';
 
           
-    int len = strlen(incMsgStr);
-    for (int i = 0; i < len; i++) {
-      incMsgStr[i] = std::toupper(incMsgStr[i]);
-    }
+    // int len = strlen(incMsgStr);
+    // for (int i = 0; i < len; i++) {
+    //   incMsgStr[i] = std::toupper(incMsgStr[i]);
+    // }
+    //
+    // // Send message back to client
+    // int sentBytes = send(clientSockFd, incMsgStr, len, 0);
+    // if (sentBytes == -1) {
+    //   std::cerr << "Message could not be sent over the TCP connection\n";
+    // }
+    
 
-    // Send message back to client
-    int sentBytes = send(clientSockFd, incMsgStr, len, 0);
-    if (sentBytes == -1) {
+    // Create HTTP response
+    std::string body = "Greetings from the HTTP server";
+    std::string bodylen = std::to_string(body.size());
+    std::string response = "";
+    response += "HTTP/1.1 200 OK\r\n";
+    response += "Content-Type: text/html\r\n";
+    response += "Content-Length: " + bodylen + "\r\n";
+    response += "Connection: close\r\n";
+    response += "\r\n";
+    response += body;
+
+    // Send message back to the client
+    int sendStatus = send(clientSockFd, response.data(), response.size(), 0);
+    if (sendStatus == -1) {
       std::cerr << "Message could not be sent over the TCP connection\n";
     }
+
+
     free(incMsg);
   }
 
