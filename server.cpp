@@ -60,7 +60,7 @@ void Server::getHttpRequest() {
 }
 
 void Server::sendHttpResponse() {
-  std::string body = "Greetings from the HTTP server";
+  std::string body = "Greetings from the HTTP server\n";
   std::string bodylen = std::to_string(body.size());
   std::string response = "";
   response += "HTTP/1.1 200 OK\r\n";
@@ -75,4 +75,12 @@ void Server::sendHttpResponse() {
   if (sendStatus == -1) {
     std::cerr << "Message could not be sent over the TCP connection\n";
   }
+  std::cout << "Sent response\n";
 }
+
+// void Server::handleRequest() {
+//   while (true) {
+//     getHttpRequest();
+//     sendHttpResponse();
+//   }
+// }

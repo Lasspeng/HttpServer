@@ -24,4 +24,5 @@ public:
   void acceptConn();
   void getHttpRequest();
   void sendHttpResponse();
+  void handleRequest();
 };

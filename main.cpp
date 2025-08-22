@@ -14,6 +14,7 @@ int main() {
 
   while (true) {
     server.acceptConn();
+    // server.handleRequest();
     server.getHttpRequest();
     server.sendHttpResponse();
   }
