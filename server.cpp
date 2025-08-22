@@ -1,0 +1,78 @@
+#include "server.h"
+
+
+Server::~Server() {
+  freeaddrinfo(servInfo);
+  close(sockFd);
+}
+
+void Server::getServerAddrInfo(int ai_family, int ai_socktype) {
+  addrinfo hints;
+  hints.ai_family = ai_family;
+  hints.ai_socktype = ai_socktype;
+  hints.ai_flags = AI_PASSIVE;
+
+  int addrInfoStatus = getaddrinfo("127.0.0.1", "8080", &hints, &servInfo);
+  if (addrInfoStatus != 0) {
+    std::cerr << "Could not get address info for server\n";
+  }
+}
+
+void Server::makeSocket() {
+  sockFd = socket(servInfo->ai_family, servInfo->ai_socktype, servInfo->ai_protocol);
+  if (sockFd == -1) {
+    std::cerr << "Socket could not be created\n";
+  }
+}
+
+void Server::bindSocket() {
+  sockaddr_in addr{};
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(8080);
+  addr.sin_addr.s_addr = inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr.s_addr);
+
+  int bindStatus = bind(sockFd, servInfo->ai_addr, servInfo->ai_addrlen);
+  if (bindStatus == -1) {
+    std::cerr << "Socket could not be bound\n";
+  }
+}
+
+void Server::listenSocket() {
+  int listenStatus = listen(sockFd, 5);
+  if (listenStatus == -1) {
+    std::cerr << "Socket could not listen for connections\n";
+  }
+}
+
+void Server::acceptConn() {
+  socklen_t size = sizeof(clientInfo);
+  clientFd = accept(sockFd, &clientInfo, &size);
+  if (clientFd == -1) {
+  std::cerr << "Connection with incoming TCP request could not be made\n";
+  }
+}
+
+void Server::getHttpRequest() {
+  int recvBytes = recv(clientFd, message, 100, 0);
+  if (recvBytes == 0) {
+    std::cerr << "Could not retrieve message\n";
+  }
+}
+
+void Server::sendHttpResponse() {
+  std::string body = "Greetings from the HTTP server";
+  std::string bodylen = std::to_string(body.size());
+  std::string response = "";
+  response += "HTTP/1.1 200 OK\r\n";
+  response += "Content-Type: text/html\r\n";
+  response += "Content-Length: " + bodylen + "\r\n";
+  response += "Connection: close\r\n";
+  response += "\r\n";
+  response += body;
+
+  // Send message back to the client
+  int sendStatus = send(clientFd, response.data(), response.size(), 0);
+  if (sendStatus == -1) {
+    std::cerr << "Message could not be sent over the TCP connection\n";
+  }
+}
