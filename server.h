@@ -1,5 +1,6 @@
 #pragma once
 
+#include "httprequest.h"
 #include <iostream>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -13,7 +14,7 @@ private:
   int sockFd;
   sockaddr clientInfo;
   int clientFd;
-  char message[];
+  HttpRequest* request;
 
 public:
   ~Server();

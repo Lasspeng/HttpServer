@@ -3,11 +3,12 @@
 
 Server::~Server() {
   freeaddrinfo(servInfo);
+  delete request;
   close(sockFd);
 }
 
 void Server::getServerAddrInfo(int ai_family, int ai_socktype) {
-  addrinfo hints;
+  addrinfo hints{};
   hints.ai_family = ai_family;
   hints.ai_socktype = ai_socktype;
   hints.ai_flags = AI_PASSIVE;
@@ -53,9 +54,15 @@ void Server::acceptConn() {
 }
 
 void Server::getHttpRequest() {
-  int recvBytes = recv(clientFd, message, 100, 0);
-  if (recvBytes == 0) {
-    std::cerr << "Could not retrieve message\n";
+  char buf[4096];
+  request = new HttpRequest();
+  int recvBytes = recv(clientFd, buf, sizeof(buf), 0);
+
+  if (recvBytes == -1) {
+    std::cout << "Peer has closed connection\n";
+    close(clientFd);
+  } else if (recvBytes > 0) {
+    request->rawRequest.append(buf, recvBytes);
   }
 }
 
