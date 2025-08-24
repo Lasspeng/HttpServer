@@ -1,4 +1,5 @@
 #include "server.h"
+#include "httprequest.h"
 
 
 Server::~Server() {
@@ -64,9 +65,21 @@ void Server::getHttpRequest() {
   } else if (recvBytes > 0) {
     request->rawRequest.append(buf, recvBytes);
   }
+  request->parseRawRequest();
 }
 
 void Server::sendHttpResponse() {
+  for (auto pair : request->requestLine) {
+    std::cout << pair.first << ": " << pair.second << '\n';
+  }
+  std::cout << '\n';
+  for (auto pair: request->headers) {
+    std::cout << pair.first << ": " << pair.second << '\n';
+  }
+  std::cout << '\n';
+  std::cout << "Body: " << request->body << '\n';
+
+
   std::string body = "Greetings from the HTTP server\n";
   std::string bodylen = std::to_string(body.size());
   std::string response = "";

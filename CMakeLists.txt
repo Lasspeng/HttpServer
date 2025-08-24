@@ -10,6 +10,7 @@ set(CMAKE_BUILD_TYPE Debug)
 add_executable(server
   main.cpp
   server.cpp
+  httprequest.cpp
 
   # include/
   # server.h
