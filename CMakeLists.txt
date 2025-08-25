@@ -8,9 +8,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_BUILD_TYPE Debug)
 
 add_executable(server
-  main.cpp
-  server.cpp
-  httprequest.cpp
+  src/main.cpp
+  src/server.cpp
+  src/httprequest.cpp
 
   # include/
   # server.h
