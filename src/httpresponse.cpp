@@ -6,11 +6,17 @@ std::string HttpResponse::stringify() {
   response += statusLine["protocol"];
   response += std::string(" ") += statusLine["status-code"];
   response += std::string(" ") += statusLine["status-text"];
-  response += "\n";
+  response += "\r\n";
 
-  for (std::pair& pair : req) {
-    response += 
+  for (const auto& pair : headers) {
+    response += pair.first;
+    response += ": ";
+    response += pair.second;
+    response += "\r\n";
   }
+
+  response += "\r\n";
+  response += body;
 
   return response;
 }

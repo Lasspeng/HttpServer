@@ -2,6 +2,7 @@
 #include <string>
 #include <functional>
 #include "httprequest.h"
+#include "httpresponse.h"
 
 namespace Router {
 
@@ -13,13 +14,17 @@ struct PairHash {
   }
 };
 
-using Handler = std::function<std::string(const HttpRequest&)>;
+using Handler = std::function<std::string(const HttpRequest*)>;
 
 std::unordered_map<std::pair<std::string, std::string>, Handler, PairHash> routes;
 
 void makeRoutes() {
-  routes[{"GET", "/"}] = [](const HttpRequest& req) {
-    return std::string();
+  routes[{"GET", "/"}] = [](const HttpRequest* req) {
+    HttpResponse response;
+    response.statusLine["status-code"] = "200";
+    response.statusLine["status-text"] = "OK";
+    response.statusLine["protocol"] = req->requestLine.at("version");
+    return response.stringify();
   };
 }
 
