@@ -2,10 +2,12 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
+#include "router.h"
 #include "server.h"
 
 
 int main() {
+  Router::makeRoutes();
   Server server;
   server.getServerAddrInfo(AF_INET, SOCK_STREAM);
   server.makeSocket();

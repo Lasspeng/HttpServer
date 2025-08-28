@@ -11,6 +11,8 @@ add_executable(server
   src/main.cpp
   src/server.cpp
   src/httprequest.cpp
+  src/router.cpp
+  src/httpresponse.cpp
 
   # include/
   # server.h

@@ -1,5 +1,6 @@
 #include "server.h"
 #include "httprequest.h"
+#include "router.h"
 
 
 Server::~Server() {
@@ -80,15 +81,18 @@ void Server::sendHttpResponse() {
   std::cout << "Body: " << request->body << '\n';
 
 
-  std::string body = "Greetings from the HTTP server\n";
-  std::string bodylen = std::to_string(body.size());
-  std::string response = "";
-  response += "HTTP/1.1 200 OK\r\n";
-  response += "Content-Type: text/html\r\n";
-  response += "Content-Length: " + bodylen + "\r\n";
-  response += "Connection: close\r\n";
-  response += "\r\n";
-  response += body;
+  // std::string body = "Greetings from the HTTP server\n";
+  // std::string bodylen = std::to_string(body.size());
+  // std::string response = "";
+  // response += "HTTP/1.1 200 OK\r\n";
+  // response += "Content-Type: text/html\r\n";
+  // response += "Content-Length: " + bodylen + "\r\n";
+  // response += "Connection: close\r\n";
+  // response += "\r\n";
+  // response += body;
+  std::string reqMethod = request->requestLine["method"];
+  std::string reqPath = request->requestLine["target"];
+  std::string response = Router::routes[{reqMethod, reqPath}](request);
 
   // Send message back to the client
   int sendStatus = send(clientFd, response.data(), response.size(), 0);
