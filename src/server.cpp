@@ -71,7 +71,7 @@ void Server::getHttpRequest() {
 
 void Server::sendHttpResponse() {
   for (auto pair : request->requestLine) {
-    std::cout << pair.first << ": " << pair.second << '\n';
+    std::cout << pair.first << ": " << pair.second << '$' << '\n';
   }
   std::cout << '\n';
   for (auto pair: request->headers) {

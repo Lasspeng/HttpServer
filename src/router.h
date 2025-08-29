@@ -12,12 +12,11 @@ struct PairHash {
 };
 
 using Handler = std::function<std::string(const HttpRequest*)>;
-
 // Declare the route map
 extern std::unordered_map<std::pair<std::string, std::string>,
                           Handler,
                           PairHash> routes;
-
 // Populate the route map
 void makeRoutes();
+std::string dispatch(const std::string& method, const std::string& path, const HttpRequest* req);
 }

@@ -35,8 +35,23 @@ void makeRoutes() {
     response.body = body;
     return response.stringify();
   };
+
+
+  // routes[{"", ""}] = [](const HttpRequest* req) {
+  //   HttpResponse response;
+  //   response.statusLine["status-code"] = "404";
+  //   response.statusLine["status-text"] = "NOT FOUND";
+  //   response.statusLine["protocol"] = req->requestLine.at("version");
+  //   response.statusLine["Connection"] = "close";
+  // };
 }
 
+std::string dispatch(const std::string& method, const std::string& path, const HttpRequest* req) {
+  const auto pair = std::make_pair(method, path);
+  auto route = routes.find(pair);
+  if (route == routes.end()) {
+  }
+}
 
 
 }
